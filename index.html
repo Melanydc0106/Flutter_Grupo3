@@ -10,12 +10,28 @@
     <header class="topbar">
       <h1>Gestor de Tareas Académicas</h1>
       <nav>
+        <button id="btn-show-all" class="btn btn-secondary">Mostrar interfaces</button>
         <button id="btn-open-login" class="btn btn-secondary">Iniciar Sesión</button>
         <button id="btn-open-register" class="btn btn-secondary">Registro de Usuario</button>
       </nav>
     </header>
 
     <main>
+      <section id="interfaces-view" class="card hidden">
+        <h2>Todas las interfaces</h2>
+        <p>Selecciona una interfaz para visualizarla rápidamente.</p>
+        <div class="interface-grid">
+          <button class="btn btn-primary interface-btn" data-interface="landing">Landing</button>
+          <button class="btn btn-primary interface-btn" data-interface="login">Inicio de sesión</button>
+          <button class="btn btn-primary interface-btn" data-interface="register">Registro</button>
+          <button class="btn btn-primary interface-btn" data-interface="portal-registro">Portal / Registro de tareas</button>
+          <button class="btn btn-primary interface-btn" data-interface="portal-pendientes">Portal / Tareas pendientes</button>
+          <button class="btn btn-primary interface-btn" data-interface="portal-completadas">Portal / Tareas completas</button>
+          <button class="btn btn-primary interface-btn" data-interface="portal-cuenta">Portal / Cuenta</button>
+          <button class="btn btn-primary interface-btn" data-interface="logout">Modal de cerrar sesión</button>
+        </div>
+      </section>
+
       <section id="landing-view" class="card">
         <h2>Gestor de Tareas Académicas</h2>
         <p>Organiza tus tareas académicas de forma sencilla y eficiente.</p>

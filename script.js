@@ -12,6 +12,7 @@ const state = {
 };
 
 const views = {
+  interfaces: document.getElementById('interfaces-view'),
   landing: document.getElementById('landing-view'),
   auth: document.getElementById('auth-view'),
   portal: document.getElementById('portal-view'),
@@ -33,15 +34,46 @@ function persist() {
 }
 
 function show(view) {
-  Object.values(views).forEach(v => v.classList.add('hidden'));
-  if (view === 'landing') views.landing.classList.remove('hidden');
-  if (view === 'auth') views.auth.classList.remove('hidden');
-  if (view === 'portal') views.portal.classList.remove('hidden');
+  ['interfaces', 'landing', 'auth', 'portal'].forEach(key => views[key].classList.add('hidden'));
+  views[view].classList.remove('hidden');
 }
 
 function showAuthCard(card) {
   views.loginCard.classList.toggle('hidden', card !== 'login');
   views.registerCard.classList.toggle('hidden', card !== 'register');
+}
+
+function getOrCreateDemoSession() {
+  let user = state.users.find(u => u.email === 'demo@portal.com');
+  if (!user) {
+    user = { name: 'Usuario Demo', email: 'demo@portal.com', password: '123456', birth: '2000-01-01', phone: '900123456' };
+    state.users.push(user);
+  }
+
+  const hasTasks = state.tasks.some(t => t.owner === user.email);
+  if (!hasTasks) {
+    state.tasks.push(
+      {
+        id: crypto.randomUUID(),
+        owner: user.email,
+        name: 'Escribir informe de Química',
+        dueDate: '2026-08-03',
+        status: 'pending',
+        completedAt: ''
+      },
+      {
+        id: crypto.randomUUID(),
+        owner: user.email,
+        name: 'Resolver problemas de Física',
+        dueDate: '2026-05-06',
+        status: 'done',
+        completedAt: '2026-05-06'
+      }
+    );
+  }
+
+  state.session = { email: user.email };
+  persist();
 }
 
 function goToPortal() {
@@ -85,6 +117,7 @@ function currentUserTasks() {
 
 function addTask(name, dueDate) {
   const user = currentUser();
+  if (!user) return;
   state.tasks.push({
     id: crypto.randomUUID(),
     owner: user.email,
@@ -158,7 +191,49 @@ function renderAll() {
   renderAccount();
 }
 
+function switchSection(section) {
+  document.querySelectorAll('.side-link').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.section === section);
+  });
+  document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden'));
+  document.getElementById(`section-${section}`).classList.remove('hidden');
+}
+
+function showInterface(interfaceName) {
+  if (interfaceName === 'landing') {
+    show('landing');
+    return;
+  }
+  if (interfaceName === 'login') {
+    show('auth');
+    showAuthCard('login');
+    return;
+  }
+  if (interfaceName === 'register') {
+    show('auth');
+    showAuthCard('register');
+    return;
+  }
+
+  getOrCreateDemoSession();
+  goToPortal();
+
+  if (interfaceName === 'portal-registro') switchSection('registro');
+  if (interfaceName === 'portal-pendientes') switchSection('pendientes');
+  if (interfaceName === 'portal-completadas') switchSection('completadas');
+  if (interfaceName === 'portal-cuenta') switchSection('cuenta');
+  if (interfaceName === 'logout') {
+    switchSection('registro');
+    logoutDialog.showModal();
+  }
+}
+
 // navegación principal
+document.getElementById('btn-show-all').addEventListener('click', () => show('interfaces'));
+document.querySelectorAll('.interface-btn').forEach(btn => {
+  btn.addEventListener('click', () => showInterface(btn.dataset.interface));
+});
+
 document.getElementById('btn-open-login').addEventListener('click', () => {
   show('auth');
   showAuthCard('login');
@@ -220,16 +295,9 @@ document.querySelectorAll('.side-link').forEach(btn => {
   btn.addEventListener('click', () => switchSection(btn.dataset.section));
 });
 
-function switchSection(section) {
-  document.querySelectorAll('.side-link').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.section === section);
-  });
-  document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden'));
-  document.getElementById(`section-${section}`).classList.remove('hidden');
-}
-
 document.getElementById('btn-edit-account').addEventListener('click', () => {
   const user = currentUser();
+  if (!user) return;
   if (!state.accountEdit) {
     setAccountEditable(true);
     return;
@@ -255,6 +323,7 @@ forms.password.addEventListener('submit', (e) => {
     return;
   }
   const user = currentUser();
+  if (!user) return;
   user.password = p1;
   persist();
   forms.password.reset();
