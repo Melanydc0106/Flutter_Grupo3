@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestor de Tareas Académicas</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>Gestor de Tareas Académicas</h1>
+      <nav>
+        <button id="btn-show-all" class="btn btn-secondary">Mostrar interfaces</button>
+        <button id="btn-open-login" class="btn btn-secondary">Iniciar Sesión</button>
+        <button id="btn-open-register" class="btn btn-secondary">Registro de Usuario</button>
+      </nav>
+    </header>
+
+    <main>
+      <section id="interfaces-view" class="card hidden">
+        <h2>Todas las interfaces</h2>
+        <p>Selecciona una interfaz para visualizarla rápidamente.</p>
+        <div class="interface-grid">
+          <button class="btn btn-primary interface-btn" data-interface="landing">Landing</button>
+          <button class="btn btn-primary interface-btn" data-interface="login">Inicio de sesión</button>
+          <button class="btn btn-primary interface-btn" data-interface="register">Registro</button>
+          <button class="btn btn-primary interface-btn" data-interface="portal-registro">Portal / Registro de tareas</button>
+          <button class="btn btn-primary interface-btn" data-interface="portal-pendientes">Portal / Tareas pendientes</button>
+          <button class="btn btn-primary interface-btn" data-interface="portal-completadas">Portal / Tareas completas</button>
+          <button class="btn btn-primary interface-btn" data-interface="portal-cuenta">Portal / Cuenta</button>
+          <button class="btn btn-primary interface-btn" data-interface="logout">Modal de cerrar sesión</button>
+        </div>
+      </section>
+
+      <section id="landing-view" class="card">
+        <h2>Gestor de Tareas Académicas</h2>
+        <p>Organiza tus tareas académicas de forma sencilla y eficiente.</p>
+        <div class="landing-grid">
+          <article class="mini-card">
+            <h3>Formulario de Tareas</h3>
+            <p>Inscribe el nombre de tu tarea y la fecha de entrega de tu próxima actividad.</p>
+            <button id="btn-go-login-task" class="btn btn-success">Registrar Tarea</button>
+          </article>
+          <article class="mini-card">
+            <h3>Panel de Control</h3>
+            <p>Muestra un resumen del estado de tus tareas (Pendientes, Completadas) para ver tu avance.</p>
+            <button id="btn-go-login-dashboard" class="btn btn-success">Ver Panel de Control</button>
+          </article>
+        </div>
+      </section>
+
+      <section id="auth-view" class="auth-wrapper hidden">
+        <div class="auth-card" id="login-card">
+          <h2>Inicio de Sesión</h2>
+          <form id="login-form">
+            <input type="email" id="login-email" placeholder="Correo Electrónico" required />
+            <input type="password" id="login-password" placeholder="Contraseña" required />
+            <button class="btn btn-primary" type="submit">Iniciar Sesión</button>
+          </form>
+          <p class="link-row">¿No tienes cuenta? <button id="link-to-register" class="inline-btn">Registrarse</button></p>
+        </div>
+
+        <div class="auth-card hidden" id="register-card">
+          <h2>Registro de Usuario</h2>
+          <form id="register-form">
+            <input type="text" id="register-name" placeholder="Nombre Completo" required />
+            <input type="email" id="register-email" placeholder="Correo Electrónico" required />
+            <input type="password" id="register-password" placeholder="Contraseña" required />
+            <button class="btn btn-success" type="submit">Crear Cuenta</button>
+          </form>
+          <p class="link-row">¿Ya tienes cuenta? <button id="link-to-login" class="inline-btn">Iniciar Sesión</button></p>
+        </div>
+      </section>
+
+      <section id="portal-view" class="hidden">
+        <div class="portal-shell">
+          <header class="portal-header">
+            <h2>BIENVENIDO A TÚ PORTAL</h2>
+            <button id="btn-logout" class="pill-danger">Salir</button>
+          </header>
+
+          <div class="portal-body">
+            <aside class="sidebar">
+              <button data-section="registro" class="side-link active">Registro de Tareas</button>
+              <button data-section="pendientes" class="side-link">Tareas Pendiente</button>
+              <button data-section="completadas" class="side-link">Tareas Completas</button>
+              <button data-section="cuenta" class="side-link">Cuenta</button>
+            </aside>
+
+            <section class="content-panel">
+              <article id="section-registro" class="content-section">
+                <h3>Formulario de Registrar Tarea</h3>
+                <form id="task-form" class="task-form">
+                  <input type="text" id="task-name" placeholder="Nombre de la tarea" required />
+                  <input type="date" id="task-date" required />
+                  <button class="btn btn-primary" type="submit">Agregar Tarea</button>
+                </form>
+              </article>
+
+              <article id="section-pendientes" class="content-section hidden">
+                <div class="section-head">
+                  <h3>Ver Tareas Pendientes</h3>
+                  <input type="search" id="pending-search" placeholder="Búsqueda general" />
+                </div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Tarea</th>
+                      <th>Fecha de entrega</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="pending-table"></tbody>
+                </table>
+              </article>
+
+              <article id="section-completadas" class="content-section hidden">
+                <h3>Ver Tareas Completadas</h3>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Tarea</th>
+                      <th>Fecha completada</th>
+                      <th>Estado</th>
+                    </tr>
+                  </thead>
+                  <tbody id="completed-table"></tbody>
+                </table>
+              </article>
+
+              <article id="section-cuenta" class="content-section hidden">
+                <h3>DATOS PERSONALES</h3>
+                <div class="account-grid">
+                  <label>Nombre completo
+                    <input id="account-name" type="text" disabled />
+                  </label>
+                  <label>Fecha de Nacimiento
+                    <input id="account-birth" type="date" disabled />
+                  </label>
+                  <label>Teléfono
+                    <input id="account-phone" type="tel" disabled placeholder="(Opcional)" />
+                  </label>
+                  <label>Correo electrónico
+                    <input id="account-email" type="email" disabled />
+                  </label>
+                </div>
+                <div class="action-row">
+                  <button id="btn-edit-account" class="btn btn-primary" type="button">Editar Datos</button>
+                  <button id="btn-change-password" class="btn btn-success" type="button">Cambiar Contraseña</button>
+                </div>
+
+                <form id="password-form" class="hidden password-form">
+                  <label>Nueva contraseña
+                    <input id="new-password" type="password" minlength="6" />
+                  </label>
+                  <label>Repetir contraseña
+                    <input id="repeat-password" type="password" minlength="6" />
+                  </label>
+                  <button class="btn btn-success" type="submit">Guardar Contraseña</button>
+                </form>
+              </article>
+            </section>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="logout-dialog">
+      <h3>Cerrar Sesión</h3>
+      <p>¿Quieres cerrar la sesión?</p>
+      <div class="action-row">
+        <button id="cancel-logout" class="btn btn-secondary" type="button">Cancelar</button>
+        <button id="confirm-logout" class="btn danger" type="button">Cerrar Sesión</button>
+      </div>
+    </dialog>
+
+    <script src="script.js"></script>
+  </body>
+</html>
